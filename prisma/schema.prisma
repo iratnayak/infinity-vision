@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  name          String
+  brand         String   
+  description   String
+  price         Float
+  images        String[] 
+  
+  // Specs specifics for filtering
+  frameShape    String   // e.g., Round, Square, Rectangle
+  frameMaterial String   // e.g., Metal, Plastic, Titanium
+  gender        String   // e.g., Men, Women, Unisex
+  color         String
+  
+  stock         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Appointment {
+  id        String   @id @default(uuid())
+  name      String
+  phone     String
+  email     String
+  date      DateTime
+  time      String
+  status    String   @default("pending") // pending, confirmed
+}
