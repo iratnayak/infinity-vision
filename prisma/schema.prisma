@@ -9,20 +9,37 @@ datasource db {
 model Product {
   id            String   @id @default(uuid())
   name          String
-  brand         String   
   description   String
   price         Float
   images        String[] 
   
-  // Specs specifics for filtering
-  frameShape    String   // e.g., Round, Square, Rectangle
-  frameMaterial String   // e.g., Metal, Plastic, Titanium
-  gender        String   // e.g., Men, Women, Unisex
+  // Relationships
+  category      Category @relation(fields: [categoryId], references: [id])
+  categoryId    String
+  brand         Brand    @relation(fields: [brandId], references: [id])
+  brandId       String
+  
+  // Specs specifics
+  frameShape    String   
+  frameMaterial String   
+  gender        String   
   color         String
   
   stock         Int      @default(0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+}
+
+model Category {
+  id       String    @id @default(uuid())
+  name     String    
+  products Product[]
+}
+
+model Brand {
+  id       String    @id @default(uuid())
+  name     String    
+  products Product[]
 }
 
 model Appointment {
@@ -32,5 +49,5 @@ model Appointment {
   email     String
   date      DateTime
   time      String
-  status    String   @default("pending") // pending, confirmed
+  status    String   @default("pending")
 }
