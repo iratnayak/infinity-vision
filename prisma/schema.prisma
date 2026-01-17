@@ -13,17 +13,25 @@ model Product {
   price         Float
   images        String[] 
   
-  // Relationships
-  category      Category @relation(fields: [categoryId], references: [id])
-  categoryId    String
-  brand         Brand    @relation(fields: [brandId], references: [id])
-  brandId       String
-  
   // Specs specifics
   frameShape    String   
-  frameMaterial String   
-  gender        String   
+  frameMaterial String    
   color         String
+
+  // Specsavers logic
+  type          String   // e.g., Designer, Blue light, Safety
+  gender        String   // e.g., Men, Women, Young
+  isDesigner    Boolean  @default(false)
+  isBlueLight   Boolean  @default(false)
+  
+  // Relationships
+  // 1. Category (Glasses, Sunglasses, Contact Lenses)
+  category      Category @relation(fields: [categoryId], references: [id])
+  categoryId    String
+
+  // 2. Brand (Ray-Ban, Oakley, etc.)
+  brand         Brand    @relation(fields: [brandId], references: [id])
+  brandId       String
   
   stock         Int      @default(0)
   createdAt     DateTime @default(now())
@@ -32,7 +40,7 @@ model Product {
 
 model Category {
   id       String    @id @default(uuid())
-  name     String    
+  name     String    // e.g., Glasses, Sunglasses
   products Product[]
 }
 
