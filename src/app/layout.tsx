@@ -14,6 +14,13 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "InfiniVision",
+  icons: {
+    icon: [
+      { url: "/tab-logo.png", type: "image/png" },
+    ],
+    shortcut: "/tab-logo.png",
+    apple: "/tab-logo.png",
+  },
 };
 
 export default function RootLayout({

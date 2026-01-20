@@ -14,7 +14,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     <Link href="/admin/products/add" className="flex items-center gap-2 group">
                         <div className="relative w-35 h-35">
                             <Image
-                                src="/ap-logo.jpg"
+                                src="/ap-logo.png"
                                 alt="Infinity Vision Logo"
                                 fill
                                 className="object-contain scale-125"

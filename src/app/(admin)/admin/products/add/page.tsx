@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import ImageUpload from "@/components/ui/image-upload";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -31,6 +32,7 @@ const formSchema = z.object({
     type: z.string().min(1, "Please select a product type"),
     gender: z.string().min(1, "Please select age & gender"),
     description: z.string().min(10, "Description must be at least 10 characters"),
+    images: z.object({ url: z.string() }).array(),
 });
 
 export default function AddProductPage() {
@@ -42,14 +44,44 @@ export default function AddProductPage() {
             price: "",
             type: "",
             gender: "",
+            images: [],
             description: "",
         },
     });
 
     // Set Temp display the data on browser console
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log("Form Submitted Data:", values);
-        alert("Data captured successfully! Check your browser console.")
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        try {
+            const response = await fetch("/api/products", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(values),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log("Product created:", data);
+                alert("Product added successfully!");
+                form.reset();
+            } else {
+                let errorMessage = "Something went wrong";
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.error || errorData.message || errorMessage;
+                    if (errorData.details) {
+                        console.error("Error details:", errorData.details);
+                    }
+                } catch {
+                    const errorText = await response.text();
+                    errorMessage = errorText || errorMessage;
+                }
+                alert(`Error: ${errorMessage}`);
+                console.error("API Error:", { status: response.status, message: errorMessage });
+            }
+        } catch (error) {
+            console.error("Submission Error:", error);
+            alert("An error occurred. Please check the console for details.");
+        }
     }
 
     return (
@@ -144,6 +176,25 @@ export default function AddProductPage() {
                                                 <SelectItem value="young">Young</SelectItem>
                                             </SelectContent>
                                         </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            {/* Image Upload Field */}
+                            <FormField
+                                control={form.control}
+                                name="images"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Images</FormLabel>
+                                        <FormControl>
+                                            <ImageUpload
+                                                value={field.value ? field.value.map((image) => image.url) : []}
+                                                disabled={form.formState.isSubmitting}
+                                                onChange={(url) => field.onChange([...field.value, { url }])}
+                                                onRemove={(url) => field.onChange([...field.value.filter((current) => current.url !== url)])}
+                                            />
+                                        </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
